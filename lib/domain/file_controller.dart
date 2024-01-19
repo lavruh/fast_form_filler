@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -30,8 +29,6 @@ class FileController extends GetxController {
     final f = await FilePicker.platform.pickFiles(allowedExtensions: ["pdf"]);
     final buffer = f?.files.first.bytes;
     if (buffer != null) {
-      print(f?.names);
-      print(buffer);
       file = File.fromRawPath(buffer);
     }
   }
@@ -45,7 +42,9 @@ class FileController extends GetxController {
   }
 
   printExistingPdf() async {
-    final pdf = await rootBundle.load('document.pdf');
-    await Printing.layoutPdf(onLayout: (_) => pdf.buffer.asUint8List());
+    final pdf = file;
+    if (pdf != null) {
+      await Printing.layoutPdf(onLayout: (_) => pdf.readAsBytesSync());
+    }
   }
 }
