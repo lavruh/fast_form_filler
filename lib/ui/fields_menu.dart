@@ -1,4 +1,6 @@
-import 'package:fast_form_filler/domain/file_controller.dart';
+import 'package:fast_form_filler/domain/fields_controller.dart';
+import 'package:fast_form_filler/ui/field_editor.dart';
+import 'package:fast_form_filler/ui/fields_data.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,22 +9,14 @@ class FieldsMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ListTile(
-          title: const Text("Fields"),
-          subtitle: Row(
-            children: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
-              IconButton(
-                  onPressed: () {
-                    Get.find<FileController>().printExistingPdf();
-                  },
-                  icon: const Icon(Icons.print)),
-            ],
-          ),
-        )
-      ],
+    return GetX<FieldsController>(
+      builder: (state) {
+        final field = state.fieldToEdit;
+        if (field != null) {
+          return FieldEditor(field: field);
+        }
+        return const FieldsData();
+      },
     );
   }
 }
