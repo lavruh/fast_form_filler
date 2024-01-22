@@ -5,6 +5,12 @@ class Field {
   final String title;
   final String data;
   final List<ShowPort> showPorts;
+
+  @override
+  String toString() {
+    return 'Field{id: $id, title: $title, showPorts: $showPorts, fieldType: $fieldType}';
+  }
+
   final FieldType fieldType;
 
   const Field({

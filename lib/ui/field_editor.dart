@@ -16,37 +16,31 @@ class FieldEditor extends StatefulWidget {
 }
 
 class FieldEditorState extends State<FieldEditor> {
-  late TextEditingController _titleController;
-  late FieldType _selectedFieldType;
-  List<ShowPort> showPorts = [];
-
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.field.title);
-    _selectedFieldType = widget.field.fieldType;
-    showPorts = widget.field.showPorts;
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = Get.find<FieldsController>();
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextField(
-            controller: _titleController,
+            controller: TextEditingController(text: widget.field.title),
             decoration: const InputDecoration(labelText: 'Title'),
+            onSubmitted: (val) =>
+                state.openEditor(widget.field.copyWith(title: val)),
           ),
           const SizedBox(height: 10),
           DropdownButtonFormField<FieldType>(
-            value: _selectedFieldType,
-            onChanged: (FieldType? newValue) {
-              setState(() {
-                _selectedFieldType = newValue!;
-              });
-            },
+            value: widget.field.fieldType,
+            onChanged: (FieldType? newValue) =>
+                state.openEditor(widget.field.copyWith(fieldType: newValue)),
             items: FieldType.values.map((FieldType fieldType) {
               return DropdownMenuItem<FieldType>(
                 value: fieldType,
@@ -56,23 +50,16 @@ class FieldEditorState extends State<FieldEditor> {
             decoration: const InputDecoration(labelText: 'Field Type'),
           ),
           const SizedBox(height: 20),
-          TextButton(onPressed: () {
-            showPorts.add(ShowPort(page: 0, position: Rect.fromLTWH(150, 150, 100, 100)));
-          }, child: const Text("Add show port")),
+          TextButton(
+              onPressed: () {
+                final showPortsList = widget.field.showPorts;
+                state.openEditor(widget.field
+                    .copyWith(showPorts: [...showPortsList, ShowPort.empty()]));
+              },
+              child: const Text("Add show port")),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () {
-              // Update the field with the edited values
-              final fieldsController = Get.find<FieldsController>();
-              Field updatedField = widget.field.copyWith(
-                title: _titleController.text,
-                fieldType: _selectedFieldType,
-              );
-              fieldsController.updateField(updatedField);
-
-              // Close the editor
-              fieldsController.closeEditor();
-            },
+            onPressed: () => state.saveState(),
             child: const Text('Save'),
           ),
         ],
