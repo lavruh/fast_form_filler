@@ -19,7 +19,7 @@ class ShowPort {
   ShowPort.empty()
       : id = DateTime.now().millisecondsSinceEpoch.toString(),
         page = 0,
-        position = const Rect.fromLTWH(100, 100, 80, 30);
+        position = const Rect.fromLTWH(00, 00, 200, 25);
 
   ShowPort copyWith({
     String? id,

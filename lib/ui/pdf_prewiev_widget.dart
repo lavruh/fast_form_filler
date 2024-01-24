@@ -15,13 +15,15 @@ class PdfPreviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetX<FieldsController>(builder: (state) {
+    return GetBuilder<FieldsController>(builder: (state) {
       List<Widget> viewPorts = [];
       final field = state.fieldToEdit;
       if (field != null) {
         for (final port in field.showPorts) {
-          final widget = ShowPortWidget(port: port, label: field.title);
-          viewPorts.add(widget);
+          if (state.openedPage == port.page) {
+            final widget = ShowPortWidget(port: port, label: field.title);
+            viewPorts.add(widget);
+          }
         }
       }
 
@@ -29,14 +31,27 @@ class PdfPreviewWidget extends StatelessWidget {
         children: [
           SfPdfViewer.file(
             doc,
+            controller: state.pdfController,
             pageLayoutMode: PdfPageLayoutMode.single,
+            interactionMode: PdfInteractionMode.pan,
+            enableDoubleTapZooming: false,
+            enableTextSelection: false,
+            canShowScrollHead: false,
+            canShowScrollStatus: false,
+            onPageChanged: (_) {
+              state.update();
+            },
+            onZoomLevelChanged: (_) {
+              state.pdfController.zoomLevel = 0;
+            },
             onTap: (details) {
               final port = state.selectedShowPort;
               if (port != null) {
                 final pos = details.position;
                 state.updateSelectedShowPort(port.copyWith(
                     page: details.pageNumber,
-                    position: Rect.fromLTWH(pos.dx, pos.dy, 100, 50)));
+                    position: Rect.fromLTWH(pos.dx, pos.dy, port.position.width,
+                        port.position.height)));
               }
             },
           ),

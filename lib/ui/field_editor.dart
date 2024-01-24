@@ -1,5 +1,6 @@
 import 'package:fast_form_filler/domain/fields_controller.dart';
 import 'package:fast_form_filler/domain/show_port.dart';
+import 'package:fast_form_filler/ui/showport_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:fast_form_filler/domain/field.dart';
 import 'package:get/get.dart';
@@ -26,7 +27,7 @@ class FieldEditorState extends State<FieldEditor> {
     final state = Get.find<FieldsController>();
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -53,10 +54,21 @@ class FieldEditorState extends State<FieldEditor> {
           TextButton(
               onPressed: () {
                 final showPortsList = widget.field.showPorts;
-                state.openEditor(widget.field
-                    .copyWith(showPorts: [...showPortsList, ShowPort.empty()]));
+                final page = state.openedPage;
+                state.openEditor(widget.field.copyWith(showPorts: [
+                  ...showPortsList,
+                  ShowPort.empty().copyWith(page: page)
+                ]));
               },
               child: const Text("Add show port")),
+          const SizedBox(height: 20),
+          SingleChildScrollView(
+            child: Column(
+              children: widget.field.showPorts
+                  .map((e) => ShowPortEditor(showPort: e))
+                  .toList(),
+            ),
+          ),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () => state.saveState(),

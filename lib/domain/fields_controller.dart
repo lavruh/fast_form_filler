@@ -1,11 +1,13 @@
 import 'package:fast_form_filler/domain/field.dart';
 import 'package:fast_form_filler/domain/show_port.dart';
 import 'package:get/get.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class FieldsController extends GetxController {
   final fields = <Field>[].obs;
   final _fieldToEdit = <Field>[].obs;
   final _selectedShowPort = <ShowPort>[].obs;
+  final pdfController = PdfViewerController();
 
   Field? get fieldToEdit {
     if (_fieldToEdit.isEmpty) {
@@ -21,6 +23,8 @@ class FieldsController extends GetxController {
     return _selectedShowPort[0];
   }
 
+  int get openedPage => pdfController.pageNumber;
+
   selectShowPort(ShowPort val) {
     _selectedShowPort.clear();
     _selectedShowPort.add(val);
@@ -35,13 +39,19 @@ class FieldsController extends GetxController {
     }).toList();
 
     final updatedField = field.copyWith(showPorts: updatedShowPorts);
-    // updateField(updatedField);
-    print(updatedField);
     openEditor(updatedField);
+  }
+
+  deleteShowPort(ShowPort showPort) {
+    final field = fieldToEdit;
+    if (field == null) return;
+    field.showPorts.removeWhere((p) => p.id == showPort.id);
+    openEditor(field);
   }
 
   openEditor(Field field) {
     _fieldToEdit.value = [field].obs;
+    update();
   }
 
   closeEditor() {
