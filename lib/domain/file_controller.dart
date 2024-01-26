@@ -4,7 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:printing/printing.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
@@ -24,28 +23,15 @@ class FileController extends GetxController {
 
   openPdfFile() async {
     final f = await FilePicker.platform.pickFiles(allowedExtensions: ['pdf']);
-    if (kIsWeb) {
-      _loadWebFile(f);
-    } else {
-      _openFileDesktop(f);
-    }
-    _template.value = _file;
-  }
-
-  _loadWebFile(FilePickerResult? f) async {
-    final buffer = f?.files.first.bytes;
-    if (buffer != null) {
-      file = File.fromRawPath(buffer);
-    }
-  }
-
-  _openFileDesktop(FilePickerResult? f) async {
     final filePath = f?.paths.first;
     if (filePath != null) {
       final tmpDir = await getTemporaryDirectory();
       final tmpPath = p.join(tmpDir.path, "tmp.pdf");
-      File(filePath).copy(tmpPath);
+      final templatePath = p.join(tmpDir.path, "template.pdf");
+      await File(filePath).copy(tmpPath);
+      await File(filePath).copy(templatePath);
       file = File(tmpPath);
+      _template.value = [File(templatePath)];
     }
   }
 
@@ -66,12 +52,12 @@ class FileController extends GetxController {
 
       for (final field in fields) {
         for (final port in field.showPorts) {
-          pdf.pages[port.page].graphics.drawString(
+          pdf.pages[port.page - 1].graphics.drawString(
               field.data, PdfStandardFont(PdfFontFamily.timesRoman, 12),
               bounds: port.position);
         }
       }
-      file!.writeAsBytes(pdf.saveSync());
+      await file!.writeAsBytes(pdf.saveSync());
       final tmp = file;
       file = tmp;
     } on Exception catch (message) {
