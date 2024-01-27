@@ -53,9 +53,32 @@ class FileController extends GetxController {
       for (final field in fields) {
         for (final port in field.showPorts) {
           pdf.pages[port.page - 1].graphics.drawString(
-              field.data, PdfStandardFont(PdfFontFamily.timesRoman, 12),
+              field.data, PdfStandardFont(PdfFontFamily.timesRoman, 10),
               bounds: port.position);
         }
+      }
+      await file!.writeAsBytes(pdf.saveSync());
+      final tmp = file;
+      file = tmp;
+    } on Exception catch (message) {
+      Get.snackbar("Error", message.toString());
+    }
+  }
+
+  updateFieldsIndicators(Field field) async {
+    try {
+      if (_template.isEmpty || file == null) {
+        throw Exception("Open file first");
+      }
+      final buffer = await _template.first.readAsBytes();
+      final pdf = PdfDocument(inputBytes: buffer);
+
+      for (final port in field.showPorts) {
+        // pdf.pages[port.page - 1].graphics
+        //     .drawRectangle(bounds: port.position, brush: PdfBrushes.rosyBrown);
+        pdf.pages[port.page - 1].graphics.drawString(
+            port.id, PdfStandardFont(PdfFontFamily.timesRoman, 10),
+            brush: PdfBrushes.red, bounds: port.position);
       }
       await file!.writeAsBytes(pdf.saveSync());
       final tmp = file;

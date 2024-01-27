@@ -1,4 +1,5 @@
 import 'package:fast_form_filler/domain/field.dart';
+import 'package:fast_form_filler/domain/file_controller.dart';
 import 'package:fast_form_filler/domain/show_port.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -8,6 +9,8 @@ class FieldsController extends GetxController {
   final _fieldToEdit = <Field>[].obs;
   final _selectedShowPort = <ShowPort>[].obs;
   final pdfController = PdfViewerController();
+  final fileState = Get.find<FileController>();
+  int lastOpenPage = 1;
 
   Field? get fieldToEdit {
     if (_fieldToEdit.isEmpty) {
@@ -39,6 +42,7 @@ class FieldsController extends GetxController {
     }).toList();
 
     final updatedField = field.copyWith(showPorts: updatedShowPorts);
+
     openEditor(updatedField);
   }
 
@@ -49,9 +53,17 @@ class FieldsController extends GetxController {
     openEditor(field);
   }
 
-  openEditor(Field field) {
+  openEditor(Field field) async {
     _fieldToEdit.value = [field].obs;
+    await fileState.updateFieldsIndicators(field);
     update();
+  }
+
+  jumpToLastOpenedPage() {
+    Future.delayed(const Duration(microseconds: 100), () {
+      print('Jump to $lastOpenPage');
+      pdfController.jumpToPage(lastOpenPage);
+    });
   }
 
   closeEditor() {
@@ -79,5 +91,11 @@ class FieldsController extends GetxController {
     } else {
       fields.add(val);
     }
+    fileState.updatePdfWithFields(fields);
+  }
+
+  void updatePageInformation() async {
+    lastOpenPage = pdfController.pageNumber;
+    // update();
   }
 }

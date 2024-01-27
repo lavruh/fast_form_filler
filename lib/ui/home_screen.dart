@@ -1,3 +1,4 @@
+import 'package:fast_form_filler/domain/fields_controller.dart';
 import 'package:fast_form_filler/domain/file_controller.dart';
 import 'package:fast_form_filler/ui/fields_menu.dart';
 import 'package:fast_form_filler/ui/pdf_prewiev_widget.dart';
@@ -25,7 +26,16 @@ class HomeScreen extends StatelessWidget {
             direction: Axis.horizontal,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Flexible(flex: 3, child: PdfPreviewWidget(doc: doc)),
+              Flexible(
+                  flex: 3,
+                  child: GetBuilder<FieldsController>(
+                    builder: (state) {
+                      return PdfPreviewWidget(
+                        doc: doc,
+                        state: state,
+                      );
+                    },
+                  )),
               const Flexible(flex: 1, child: FieldsMenu()),
             ],
           );
