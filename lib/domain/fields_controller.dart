@@ -43,6 +43,7 @@ class FieldsController extends GetxController {
 
     final updatedField = field.copyWith(showPorts: updatedShowPorts);
 
+    _selectedShowPort.clear();
     openEditor(updatedField);
   }
 
