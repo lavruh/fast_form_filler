@@ -60,8 +60,7 @@ class FieldsController extends GetxController {
   }
 
   jumpToLastOpenedPage() {
-    Future.delayed(const Duration(microseconds: 100), () {
-      print('Jump to $lastOpenPage');
+    Future.delayed(const Duration(milliseconds: 100), () {
       pdfController.jumpToPage(lastOpenPage);
     });
   }
