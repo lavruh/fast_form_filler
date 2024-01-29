@@ -9,30 +9,36 @@ class FieldsData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ListTile(
-          title: const Text("Fields"),
-          subtitle: Row(
-            children: [
-              IconButton(
-                  onPressed: () => Get.find<FieldsController>().addField(),
-                  icon: const Icon(Icons.add)),
-              IconButton(
-                  onPressed: () =>
-                      Get.find<FileController>().printExistingPdf(),
-                  icon: const Icon(Icons.print)),
-            ],
+    return Card(
+      elevation: 3,
+      child: Column(
+        children: [
+          ListTile(
+            title: const Text(
+              "Fields",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            subtitle: Row(
+              children: [
+                IconButton(
+                    onPressed: () => Get.find<FieldsController>().addField(),
+                    icon: const Icon(Icons.add)),
+                IconButton(
+                    onPressed: () =>
+                        Get.find<FileController>().printExistingPdf(),
+                    icon: const Icon(Icons.print)),
+              ],
+            ),
           ),
-        ),
-        GetX<FieldsController>(builder: (state) {
-          return Column(
-            children: state.fields
-                .map((field) => FieldDataForm(field: field))
-                .toList(),
-          );
-        })
-      ],
+          GetX<FieldsController>(builder: (state) {
+            return Column(
+              children: state.fields
+                  .map((field) => FieldDataForm(field: field))
+                  .toList(),
+            );
+          })
+        ],
+      ),
     );
   }
 }

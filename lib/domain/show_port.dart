@@ -16,10 +16,9 @@ class ShowPort {
     return '\nShowPort{id: $id, page: $page, position: $position}\n';
   }
 
-  ShowPort.empty()
-      : id = DateTime.now().millisecondsSinceEpoch.toString(),
-        page = 0,
-        position = const Rect.fromLTWH(00, 00, 200, 25);
+  ShowPort.empty({required this.id})
+      : page = 0,
+        position = const Rect.fromLTWH(00, 00, 800, 200);
 
   ShowPort copyWith({
     String? id,

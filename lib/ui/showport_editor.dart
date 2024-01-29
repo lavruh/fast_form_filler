@@ -16,58 +16,64 @@ class ShowPortEditor extends StatelessWidget {
         TextEditingController(text: showPort.position.left.toString());
     TextEditingController topController =
         TextEditingController(text: showPort.position.top.toString());
-    TextEditingController widthController =
-        TextEditingController(text: showPort.position.width.toString());
-    TextEditingController heightController =
-        TextEditingController(text: showPort.position.height.toString());
 
     return GetX<FieldsController>(builder: (state) {
       return Card(
-        color: state.selectedShowPort == showPort ? Colors.yellow : Colors.white,
+        color:
+            state.selectedShowPort == showPort ? Colors.yellow : Colors.white,
         elevation: 4.0,
         margin: const EdgeInsets.all(8.0),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              TextButton(
-                  onPressed: () {
-                    state.selectShowPort(showPort);
-                  },
-                  child: Text(
-                    showPort.id,
-                    style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.bold),
-                  )),
-              TextField(
-                controller: pageController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: "Page"),
+              Flex(
+                direction: Axis.horizontal,
+                children: [
+                  Flexible(
+                      flex: 2,
+                      child: TextButton(
+                          onPressed: () {
+                            state.selectShowPort(showPort);
+                          },
+                          child: Text(
+                            showPort.id,
+                            style: const TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.bold),
+                          ))),
+                  Flexible(
+                    flex: 3,
+                    child: TextField(
+                      controller: pageController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(labelText: "Page"),
+                    ),
+                  ),
+                  Flexible(
+                    child: IconButton(
+                      onPressed: () {
+                        state.selectShowPort(showPort);
+                        ShowPort updatedShowPort = showPort.copyWith(
+                            page: int.parse(pageController.text),
+                            position: Rect.fromLTWH(
+                                double.parse(leftController.text),
+                                double.parse(topController.text),
+                                showPort.position.width,
+                                showPort.position.height));
+                        state.updateSelectedShowPort(updatedShowPort);
+                      },
+                      icon: const Icon(Icons.save),
+                    ),
+                  ),
+                  Flexible(
+                    child: IconButton(
+                      onPressed: () => state.deleteShowPort(showPort),
+                      icon: const Icon(Icons.delete),
+                    ),
+                  )
+                ],
               ),
               _buildTextFieldRow('Top', topController, 'Left', leftController),
-              _buildTextFieldRow(
-                  'Height', heightController, 'Width', widthController),
-              Row(
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      state.selectShowPort(showPort);
-                      ShowPort updatedShowPort = showPort.copyWith(
-                          page: int.parse(pageController.text),
-                          position: Rect.fromLTWH(
-                              double.parse(leftController.text),
-                              double.parse(topController.text),
-                              double.parse(widthController.text),
-                              double.parse(heightController.text)));
-                      state.updateSelectedShowPort(updatedShowPort);
-                    },
-                    child: const Text('Save'),
-                  ),
-                  TextButton(
-                      onPressed: () => state.deleteShowPort(showPort),
-                      child: const Text('Delete'))
-                ],
-              )
             ],
           ),
         ),

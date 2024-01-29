@@ -10,24 +10,18 @@ class FieldDataForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _dataController = TextEditingController(text: field.data);
+    final dataController = TextEditingController(text: field.data);
 
     return Card(
-      elevation: 4.0,
-      margin: const EdgeInsets.all(16.0),
+      elevation: 3.0,
       child: ListTile(
-        title: Text(
-          field.title, // Use the title as the label text
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: TextField(
-          controller: _dataController,
-          decoration:
-              const InputDecoration(border: InputBorder.none, hintText: 'Data'),
+        title: TextField(
+          controller: dataController,
+          decoration: InputDecoration(labelText: field.title),
           onEditingComplete: () {
             final fieldsController = Get.find<FieldsController>();
             final updatedField = field.copyWith(
-              data: _dataController.text,
+              data: dataController.text,
             );
             fieldsController.updateField(updatedField);
             fieldsController.closeEditor();

@@ -12,10 +12,16 @@ class FieldsMenu extends StatelessWidget {
     return GetX<FieldsController>(
       builder: (state) {
         final field = state.fieldToEdit;
-        if (field != null) {
-          return FieldEditor(field: field);
-        }
-        return const FieldsData();
+
+        final editor = field == null ? Container() : FieldEditor(field: field);
+
+        return AnimatedCrossFade(
+            crossFadeState: field != null
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            firstChild: editor,
+            secondChild: const FieldsData(),
+            duration: const Duration(milliseconds: 500));
       },
     );
   }
