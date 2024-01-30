@@ -9,6 +9,9 @@ class FieldsData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final state = Get.find<FieldsController>();
+    final fileController = Get.find<FileController>();
+
     return Card(
       elevation: 3,
       child: Column(
@@ -21,12 +24,20 @@ class FieldsData extends StatelessWidget {
             subtitle: Row(
               children: [
                 IconButton(
-                    onPressed: () => Get.find<FieldsController>().addField(),
-                    icon: const Icon(Icons.add)),
+                  onPressed: () => state.addField(),
+                  icon: const Icon(Icons.add),
+                  tooltip: "Add field",
+                ),
                 IconButton(
-                    onPressed: () =>
-                        Get.find<FileController>().printExistingPdf(),
-                    icon: const Icon(Icons.print)),
+                  onPressed: () => fileController.printExistingPdf(),
+                  icon: const Icon(Icons.print),
+                  tooltip: 'Print',
+                ),
+                IconButton(
+                  onPressed: () => fileController.saveTemplate(),
+                  icon: const Icon(Icons.save),
+                  tooltip: "Save template",
+                ),
               ],
             ),
           ),

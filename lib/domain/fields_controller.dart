@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fast_form_filler/domain/field.dart';
 import 'package:fast_form_filler/domain/file_controller.dart';
 import 'package:fast_form_filler/domain/show_port.dart';
@@ -96,6 +98,21 @@ class FieldsController extends GetxController {
 
   void updatePageInformation() async {
     lastOpenPage = pdfController.pageNumber;
-    // update();
+  }
+
+  String saveFieldsDataAsJson() {
+    final data = fields.map((field) => field.toJson()).toList();
+    return jsonEncode(data);
+  }
+
+  void loadFieldsFromJson({required String json}) {
+    final jsonData = jsonDecode(json);
+    List<Field> loadedFields = [];
+    for (final f in jsonData) {
+      loadedFields.add(Field.fromJson(f));
+    }
+    fields.clear();
+    fields.addAll(loadedFields);
+    fileState.updatePdfWithFields(fields);
   }
 }

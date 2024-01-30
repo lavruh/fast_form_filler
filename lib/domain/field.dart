@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:fast_form_filler/domain/show_port.dart';
 
 class Field {
@@ -41,6 +42,38 @@ class Field {
       data: data ?? this.data,
       showPorts: showPorts ?? this.showPorts,
       fieldType: fieldType ?? this.fieldType,
+    );
+  }
+
+  String toJson() {
+    final d = {
+      'id': id,
+      'title': title,
+      'data': data,
+      'showPorts': showPorts.map((showPort) => showPort.toJson()).toList(),
+      'fieldType': fieldType.toString(),
+    };
+    return jsonEncode(d);
+  }
+
+  factory Field.fromJson(String jsonString) {
+    final json = jsonDecode(jsonString);
+
+    final portsJson = json['showPorts'];
+    List<ShowPort> ports = [];
+
+    for (final sp in portsJson) {
+      ports.add(ShowPort.fromJson("$sp"));
+    }
+
+    print(portsJson);
+    return Field(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      data: json['data'] as String,
+      showPorts: ports,
+      fieldType:
+          FieldType.values.firstWhere((e) => e.toString() == json['fieldType']),
     );
   }
 }

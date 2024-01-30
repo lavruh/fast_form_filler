@@ -16,9 +16,17 @@ class HomeScreen extends StatelessWidget {
           final doc = state.file;
           if (doc == null) {
             return Center(
-              child: TextButton(
-                child: const Text('Open file'),
-                onPressed: () => state.openPdfFile(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                    child: const Text('Open PDF'),
+                    onPressed: () => state.openPdfFile(),
+                  ),
+                  TextButton(
+                      onPressed: () => state.openTemplate(),
+                      child: const Text("Open saved form"))
+                ],
               ),
             );
           }
