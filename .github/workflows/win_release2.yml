@@ -27,12 +27,12 @@ jobs:
           uses: thedoctor0/zip-release@master
           with:
             type: 'zip'
-            filename: PartTracker-${{github.ref_name}}-windows-${{steps.read-version.outputs.version-number}}.zip
-            directory: build/windows/runner/Release
+            filename: FastFormFiller-${{github.ref_name}}-windows-${{steps.read-version.outputs.version-number}}.zip
+            directory: build\windows\x64\runner\Release
         - name: Release
           uses: softprops/action-gh-release@v1
           with:
-            tag_name: PartTracker-win-${{steps.read-version.outputs.version-number}}
-            files: build/windows/runner/Release/PartTracker-${{github.ref_name}}-windows-${{steps.read-version.outputs.version-number}}.zip
+            tag_name: FastFormFiller-win-${{steps.read-version.outputs.version-number}}
+            files: build\windows\x64\runner\Release\FastFormFiller-${{github.ref_name}}-windows-${{steps.read-version.outputs.version-number}}.zip
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
