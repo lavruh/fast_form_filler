@@ -60,7 +60,7 @@ class FileController extends GetxController {
       for (final field in fields) {
         for (final port in field.showPorts) {
           pdf.pages[port.page - 1].graphics.drawString(
-              field.data, PdfStandardFont(PdfFontFamily.timesRoman, 10),
+              field.data, PdfStandardFont(port.font, port.fontSize.toDouble()),
               bounds: port.position);
         }
       }
@@ -84,7 +84,7 @@ class FileController extends GetxController {
         // pdf.pages[port.page - 1].graphics
         //     .drawRectangle(bounds: port.position, brush: PdfBrushes.rosyBrown);
         pdf.pages[port.page - 1].graphics.drawString(
-            port.id, PdfStandardFont(PdfFontFamily.timesRoman, 10),
+            port.id, PdfStandardFont(port.font, port.fontSize.toDouble()),
             brush: PdfBrushes.red, bounds: port.position);
       }
       await file!.writeAsBytes(pdf.saveSync());
