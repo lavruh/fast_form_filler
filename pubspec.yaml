@@ -9,6 +9,7 @@ environment:
 
 dependencies:
   archive: ^3.4.10
+  build_runner: ^2.4.8
   file_picker: ^6.1.1
   flutter:
     sdk: flutter
