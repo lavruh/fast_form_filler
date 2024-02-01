@@ -88,7 +88,10 @@ class FieldEditorState extends State<FieldEditor> {
             child: SingleChildScrollView(
               child: Column(
                 children: widget.field.showPorts
-                    .map((e) => ShowPortEditor(showPort: e))
+                    .map((e) => ShowPortEditor(
+                          showPort: e,
+                          key: Key(e.hashCode.toString()),
+                        ))
                     .toList(),
               ),
             ),

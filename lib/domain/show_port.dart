@@ -26,8 +26,29 @@ class ShowPort {
   ShowPort.empty({required this.id})
       : page = 0,
         position = const Rect.fromLTWH(00, 00, 800, 200),
-        fontSize = 12,
-        font = PdfFontFamily.timesRoman; // Default font and size
+        fontSize = 10,
+        font = PdfFontFamily.timesRoman;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ShowPort &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          page == other.page &&
+          position == other.position &&
+          fontSize == other.fontSize &&
+          font == other.font;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      page.hashCode ^
+      position.hashCode ^
+      fontSize.hashCode ^
+      font.hashCode;
+
+  // Default font and size
 
   ShowPort copyWith({
     String? id,
