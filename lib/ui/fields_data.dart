@@ -14,40 +14,46 @@ class FieldsData extends StatelessWidget {
 
     return Card(
       elevation: 3,
-      child: Column(
+      child: Flex(
+        direction: Axis.vertical,
         children: [
-          ListTile(
-            title: const Text(
-              "Fields",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-            subtitle: Row(
-              children: [
-                IconButton(
-                  onPressed: () => state.addField(),
-                  icon: const Icon(Icons.add),
-                  tooltip: "Add field",
-                ),
-                IconButton(
-                  onPressed: () => fileController.printExistingPdf(),
-                  icon: const Icon(Icons.print),
-                  tooltip: 'Print',
-                ),
-                IconButton(
-                  onPressed: () => fileController.saveTemplate(),
-                  icon: const Icon(Icons.save),
-                  tooltip: "Save template",
-                ),
-              ],
+          Flexible(
+            flex: 1,
+            child: ListTile(
+              title: const Text(
+                "Fields",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              subtitle: Row(
+                children: [
+                  IconButton(
+                    onPressed: () => state.addField(),
+                    icon: const Icon(Icons.add),
+                    tooltip: "Add field",
+                  ),
+                  IconButton(
+                    onPressed: () => fileController.printExistingPdf(),
+                    icon: const Icon(Icons.print),
+                    tooltip: 'Print',
+                  ),
+                  IconButton(
+                    onPressed: () => fileController.saveTemplate(),
+                    icon: const Icon(Icons.save),
+                    tooltip: "Save template",
+                  ),
+                ],
+              ),
             ),
           ),
-          GetX<FieldsController>(builder: (state) {
-            return Column(
-              children: state.fields
-                  .map((field) => FieldDataForm(field: field))
-                  .toList(),
-            );
-          })
+          Flexible(
+              flex: 5,
+              child: GetX<FieldsController>(builder: (state) {
+                return ListView(
+                  children: state.fields
+                      .map((field) => FieldDataForm(field: field))
+                      .toList(),
+                );
+              }))
         ],
       ),
     );

@@ -66,7 +66,6 @@ class Field {
       ports.add(ShowPort.fromJson("$sp"));
     }
 
-    print(portsJson);
     return Field(
       id: json['id'] as String,
       title: json['title'] as String,

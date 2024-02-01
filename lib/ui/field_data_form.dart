@@ -17,7 +17,13 @@ class FieldDataForm extends StatelessWidget {
       child: ListTile(
         title: TextField(
           controller: dataController,
-          decoration: InputDecoration(labelText: field.title),
+          decoration: InputDecoration(
+            labelText: field.title,
+            suffix: IconButton(
+              icon: const Icon(Icons.more_vert),
+              onPressed: () => Get.find<FieldsController>().openEditor(field),
+            ),
+          ),
           onEditingComplete: () {
             final fieldsController = Get.find<FieldsController>();
             final updatedField = field.copyWith(
@@ -26,10 +32,6 @@ class FieldDataForm extends StatelessWidget {
             fieldsController.updateField(updatedField);
             fieldsController.closeEditor();
           },
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.edit),
-          onPressed: () => Get.find<FieldsController>().openEditor(field),
         ),
       ),
     );

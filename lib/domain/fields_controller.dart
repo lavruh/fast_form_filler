@@ -49,6 +49,12 @@ class FieldsController extends GetxController {
     openEditor(updatedField);
   }
 
+  deleteField(Field field) {
+    fields.removeWhere((f) => f.id == field.id);
+    fileState.updatePdfWithFields(fields);
+    closeEditor();
+  }
+
   deleteShowPort(ShowPort showPort) {
     final field = fieldToEdit;
     if (field == null) return;

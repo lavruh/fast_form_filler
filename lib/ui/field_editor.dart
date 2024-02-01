@@ -52,8 +52,20 @@ class FieldEditorState extends State<FieldEditor> {
                     Flexible(
                       flex: 1,
                       child: IconButton(
+                          onPressed: () => state.closeEditor(),
+                          icon: const Icon(Icons.arrow_back)),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: IconButton(
                           onPressed: () => state.saveState(),
                           icon: const Icon(Icons.save)),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: IconButton(
+                          onPressed: () => state.deleteField(widget.field),
+                          icon: const Icon(Icons.delete)),
                     ),
                   ],
                 ),
