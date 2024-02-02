@@ -87,7 +87,7 @@ class ShowPort {
     return ShowPort(
       id: json['id'] as String,
       page: json['page'] as int,
-      position: Rect.fromLTRB(
+      position: Rect.fromLTWH(
         json['position']['left'] as double,
         json['position']['top'] as double,
         json['position']['width'] as double,
