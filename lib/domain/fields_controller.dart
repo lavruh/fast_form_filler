@@ -76,6 +76,7 @@ class FieldsController extends GetxController {
 
   closeEditor() {
     _fieldToEdit.clear();
+    fileState.updatePdfWithFields(fields);
   }
 
   saveState() {

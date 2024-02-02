@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:fast_form_filler/domain/field.dart';
 import 'package:fast_form_filler/domain/fields_controller.dart';
+import 'package:fast_form_filler/domain/show_port.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
@@ -49,24 +50,37 @@ class FileController extends GetxController {
     }
   }
 
-  updatePdfWithFields(List<Field> fields) async {
-    try {
-      if (_template.isEmpty || file == null) {
-        throw Exception("Open file first");
-      }
-      final buffer = await _template.first.readAsBytes();
-      final pdf = PdfDocument(inputBytes: buffer);
+  Future<List<int>> _updatePdfBuffer(
+    List<Field> fields,
+    Function(PdfDocument, Field, ShowPort) updateAction,
+  ) async {
+    if (_template.isEmpty || file == null) {
+      throw Exception("Open file first");
+    }
+    final buffer = await _template.first.readAsBytes();
+    final pdf = PdfDocument(inputBytes: buffer);
 
-      for (final field in fields) {
-        for (final port in field.showPorts) {
-          if (pdf.pages.count >= port.page) {
-            pdf.pages[port.page - 1].graphics.drawString(field.data,
-                PdfStandardFont(port.font, port.fontSize.toDouble()),
-                bounds: port.position);
-          }
+    for (final field in fields) {
+      for (final port in field.showPorts) {
+        if (pdf.pages.count >= port.page) {
+          updateAction(pdf, field, port);
         }
       }
-      await file!.writeAsBytes(pdf.saveSync());
+    }
+    return pdf.saveSync();
+  }
+
+  updatePdfWithFields(List<Field> fields) async {
+    try {
+      final buffer = await _updatePdfBuffer(
+        fields,
+        (pdf, field, port) {
+          pdf.pages[port.page - 1].graphics.drawString(
+              field.data, PdfStandardFont(port.font, port.fontSize.toDouble()),
+              bounds: port.position);
+        },
+      );
+      await file!.writeAsBytes(buffer);
       final tmp = file;
       file = tmp;
     } on Exception {
@@ -76,22 +90,12 @@ class FileController extends GetxController {
 
   updateFieldsIndicators(Field field) async {
     try {
-      if (_template.isEmpty || file == null) {
-        throw Exception("Open file first");
-      }
-      final buffer = await _template.first.readAsBytes();
-      final pdf = PdfDocument(inputBytes: buffer);
-
-      for (final port in field.showPorts) {
-        if (pdf.pages.count >= port.page) {
-          pdf.pages[port.page - 1].graphics.drawRectangle(
-              bounds: port.position, brush: PdfBrushes.rosyBrown);
-          pdf.pages[port.page - 1].graphics.drawString(
-              port.id, PdfStandardFont(port.font, port.fontSize.toDouble()),
-              brush: PdfBrushes.red, bounds: port.position);
-        }
-      }
-      await file!.writeAsBytes(pdf.saveSync());
+      final buffer = await _updatePdfBuffer([field], (pdf, field, port) {
+        pdf.pages[port.page - 1].graphics.drawString(
+            port.id, PdfStandardFont(port.font, port.fontSize.toDouble()),
+            brush: PdfBrushes.red, bounds: port.position);
+      });
+      await file!.writeAsBytes(buffer);
       final tmp = file;
       file = tmp;
     } on Exception catch (message) {
