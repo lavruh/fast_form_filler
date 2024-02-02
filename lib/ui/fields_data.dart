@@ -37,6 +37,16 @@ class FieldsData extends StatelessWidget {
                     tooltip: 'Print',
                   ),
                   IconButton(
+                    onPressed: () => fileController.openTemplate(),
+                    icon: const Icon(Icons.folder_open),
+                    tooltip: 'Open template file',
+                  ),
+                  IconButton(
+                    onPressed: () => fileController.openPdfFile(),
+                    icon: const Icon(Icons.picture_as_pdf),
+                    tooltip: 'Open PDF file',
+                  ),
+                  IconButton(
                     onPressed: () => fileController.saveTemplate(),
                     icon: const Icon(Icons.save),
                     tooltip: "Save template",

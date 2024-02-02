@@ -59,9 +59,11 @@ class FileController extends GetxController {
 
       for (final field in fields) {
         for (final port in field.showPorts) {
-          pdf.pages[port.page - 1].graphics.drawString(
-              field.data, PdfStandardFont(port.font, port.fontSize.toDouble()),
-              bounds: port.position);
+          if (pdf.pages.count >= port.page) {
+            pdf.pages[port.page - 1].graphics.drawString(field.data,
+                PdfStandardFont(port.font, port.fontSize.toDouble()),
+                bounds: port.position);
+          }
         }
       }
       await file!.writeAsBytes(pdf.saveSync());
@@ -81,11 +83,13 @@ class FileController extends GetxController {
       final pdf = PdfDocument(inputBytes: buffer);
 
       for (final port in field.showPorts) {
-        // pdf.pages[port.page - 1].graphics
-        //     .drawRectangle(bounds: port.position, brush: PdfBrushes.rosyBrown);
-        pdf.pages[port.page - 1].graphics.drawString(
-            port.id, PdfStandardFont(port.font, port.fontSize.toDouble()),
-            brush: PdfBrushes.red, bounds: port.position);
+        if (pdf.pages.count >= port.page) {
+          pdf.pages[port.page - 1].graphics.drawRectangle(
+              bounds: port.position, brush: PdfBrushes.rosyBrown);
+          pdf.pages[port.page - 1].graphics.drawString(
+              port.id, PdfStandardFont(port.font, port.fontSize.toDouble()),
+              brush: PdfBrushes.red, bounds: port.position);
+        }
       }
       await file!.writeAsBytes(pdf.saveSync());
       final tmp = file;
