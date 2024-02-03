@@ -1,6 +1,7 @@
 import 'package:fast_form_filler/domain/fields_controller.dart';
 import 'package:fast_form_filler/domain/file_controller.dart';
 import 'package:fast_form_filler/ui/field_data_form.dart';
+import 'package:fast_form_filler/ui/generation_settings_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,11 +21,7 @@ class FieldsData extends StatelessWidget {
           Flexible(
             flex: 1,
             child: ListTile(
-              title: const Text(
-                "Fields",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              subtitle: Row(
+              title: Row(
                 children: [
                   IconButton(
                     onPressed: () => state.addField(),
@@ -45,6 +42,21 @@ class FieldsData extends StatelessWidget {
                     onPressed: () => fileController.openPdfFile(),
                     icon: const Icon(Icons.picture_as_pdf),
                     tooltip: 'Open PDF file',
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      final iterations =
+                          await showGenerationSettingsDialog(context);
+                      if (iterations != null) {
+                        final pageNumber = state.lastOpenPage;
+                        fileController.createFileFromIteratingFields(
+                          numberOfIterations: iterations,
+                          pageToIterate: pageNumber,
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.control_point_duplicate),
+                    tooltip: 'Generate PDF with iterating fields',
                   ),
                   IconButton(
                     onPressed: () => fileController.saveTemplate(),

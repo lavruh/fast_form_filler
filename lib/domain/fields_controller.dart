@@ -122,4 +122,12 @@ class FieldsController extends GetxController {
     fields.addAll(loadedFields);
     fileState.updatePdfWithFields(fields);
   }
+
+  List<Field> getFieldsPlacedOnPage({required int page}) {
+    return fields
+        .where(
+          (field) => field.showPorts.any((sp) => sp.page == page),
+        )
+        .toList();
+  }
 }
