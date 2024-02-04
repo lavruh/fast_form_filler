@@ -130,4 +130,8 @@ class FieldsController extends GetxController {
         )
         .toList();
   }
+
+  List<Field> iterateFields(List<Field> fields) {
+    return fields.map((f) => f.iterateValue()).toList();
+  }
 }

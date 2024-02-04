@@ -81,6 +81,18 @@ class FieldEditorState extends State<FieldEditor> {
                   }).toList(),
                   decoration: const InputDecoration(labelText: 'Field Type'),
                 ),
+                DropdownButtonFormField<FieldDataType>(
+                  value: widget.field.dataType,
+                  onChanged: (FieldDataType? newValue) => state
+                      .openEditor(widget.field.copyWith(dataType: newValue)),
+                  items: FieldDataType.values.map((FieldDataType dt) {
+                    return DropdownMenuItem<FieldDataType>(
+                      value: dt,
+                      child: Text(dt.toString().split('.').last),
+                    );
+                  }).toList(),
+                  decoration: const InputDecoration(labelText: 'Field Data Type'),
+                ),
                 TextButton(
                     onPressed: () {
                       final showPortsList = widget.field.showPorts;

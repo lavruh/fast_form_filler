@@ -12,12 +12,12 @@ void main() {
       final fieldsController = Get.put<FieldsController>(FieldsController());
       fieldsController.fields.add(
         const Field(
-          id: '1',
-          title: 'Field 1',
-          data: 'Data 1',
-          showPorts: [],
-          fieldType: FieldType.sameEveryPrint,
-        ),
+            id: '1',
+            title: 'Field 1',
+            data: 'Data 1',
+            showPorts: [],
+            fieldType: FieldType.same,
+            dataType: FieldDataType.string),
       );
 
       // Act
@@ -35,12 +35,12 @@ void main() {
       final fieldsController = Get.put<FieldsController>(FieldsController());
       fieldsController.fields.add(
         const Field(
-          id: '1',
-          title: 'Field 1',
-          data: 'Data 1',
-          showPorts: [],
-          fieldType: FieldType.sameEveryPrint,
-        ),
+            id: '1',
+            title: 'Field 1',
+            data: 'Data 1',
+            showPorts: [],
+            fieldType: FieldType.same,
+            dataType: FieldDataType.number),
       );
 
       // Act

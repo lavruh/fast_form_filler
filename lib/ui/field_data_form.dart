@@ -11,27 +11,34 @@ class FieldDataForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dataController = TextEditingController(text: field.data);
+    final formKey = GlobalKey<FormState>();
 
     return Card(
       elevation: 3.0,
       child: ListTile(
-        title: TextField(
-          controller: dataController,
-          decoration: InputDecoration(
-            labelText: field.title,
-            suffix: IconButton(
-              icon: const Icon(Icons.more_vert),
-              onPressed: () => Get.find<FieldsController>().openEditor(field),
+        title: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: dataController,
+            decoration: InputDecoration(
+              labelText: field.title,
+              suffix: IconButton(
+                icon: const Icon(Icons.more_vert),
+                onPressed: () => Get.find<FieldsController>().openEditor(field),
+              ),
             ),
+            validator: field.validateField,
+            onEditingComplete: () {
+              if (formKey.currentState!.validate()) {
+                final fieldsController = Get.find<FieldsController>();
+                final updatedField = field.copyWith(
+                  data: dataController.text,
+                );
+                fieldsController.updateField(updatedField);
+                fieldsController.closeEditor();
+              }
+            },
           ),
-          onEditingComplete: () {
-            final fieldsController = Get.find<FieldsController>();
-            final updatedField = field.copyWith(
-              data: dataController.text,
-            );
-            fieldsController.updateField(updatedField);
-            fieldsController.closeEditor();
-          },
         ),
       ),
     );

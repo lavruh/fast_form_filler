@@ -61,8 +61,9 @@ class FileController extends GetxController {
     final page = pdf.pages[pageToIterate - 1];
     final template = page.createTemplate();
 
+    final fieldsController = Get.find<FieldsController>();
     final List<Field> fieldsOnPage =
-        Get.find<FieldsController>().getFieldsPlacedOnPage(page: pageToIterate);
+        fieldsController.getFieldsPlacedOnPage(page: pageToIterate);
 
     _iterateFieldsAndPorts(
         fields: fieldsOnPage,
@@ -75,12 +76,16 @@ class FileController extends GetxController {
     final rightMargin = pdf.pageSettings.margins.right;
     final topMargin = pdf.pageSettings.margins.top;
 
+    List<Field> fields = [];
     for (int i = 0; i < numberOfIterations; i++) {
+      if (i == 0) {
+        fields = fieldsOnPage;
+      }
       final page = pdf.pages.add();
       page.graphics.drawPdfTemplate(template, Offset(-rightMargin, -topMargin));
-
+      fields = fieldsController.iterateFields(fields);
       _iterateFieldsAndPorts(
-          fields: fieldsOnPage,
+          fields: fields,
           condition: (page) => pageToIterate == page,
           action: (field, port) {
             final pos = port.position;
