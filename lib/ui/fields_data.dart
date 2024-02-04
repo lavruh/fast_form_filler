@@ -44,17 +44,7 @@ class FieldsData extends StatelessWidget {
                     tooltip: 'Open PDF file',
                   ),
                   IconButton(
-                    onPressed: () async {
-                      final iterations =
-                          await showGenerationSettingsDialog(context);
-                      if (iterations != null) {
-                        final pageNumber = state.lastOpenPage;
-                        fileController.createFileFromIteratingFields(
-                          numberOfIterations: iterations,
-                          pageToIterate: pageNumber,
-                        );
-                      }
-                    },
+                    onPressed: () => showGenerationSettingsDialog(context),
                     icon: const Icon(Icons.control_point_duplicate),
                     tooltip: 'Generate PDF with iterating fields',
                   ),

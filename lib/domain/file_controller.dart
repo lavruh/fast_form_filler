@@ -51,19 +51,30 @@ class FileController extends GetxController {
     }
   }
 
-  createFileFromIteratingFields(
-      {int numberOfIterations = 1, int pageToIterate = 1}) async {
+  createFileFromIteratingFields({
+    int numberOfIterations = 1,
+    List<int> pagesToIterate = const [1],
+  }) async {
     if (_template.isEmpty || file == null) {
       throw Exception("Open file first");
     }
+    final fieldsController = Get.find<FieldsController>();
     final buffer = await _template.first.readAsBytes();
     final pdf = PdfDocument(inputBytes: buffer);
-    final page = pdf.pages[pageToIterate - 1];
-    final template = page.createTemplate();
 
-    final fieldsController = Get.find<FieldsController>();
-    final List<Field> fieldsOnPage =
-        fieldsController.getFieldsPlacedOnPage(page: pageToIterate);
+    final List<Field> fieldsOnPage = [];
+    List<PdfTemplate> templates = [];
+    for (final pageNo in pagesToIterate) {
+      try {
+        final page = pdf.pages[pageNo - 1];
+        final template = page.createTemplate();
+        templates.add(template);
+        fieldsOnPage
+            .addAll(fieldsController.getFieldsPlacedOnPage(page: pageNo));
+      } on Exception {
+        throw Exception("Wrongly selected pages");
+      }
+    }
 
     _iterateFieldsAndPorts(
         fields: fieldsOnPage,
@@ -81,19 +92,23 @@ class FileController extends GetxController {
       if (i == 0) {
         fields = fieldsOnPage;
       }
-      final page = pdf.pages.add();
-      page.graphics.drawPdfTemplate(template, Offset(-rightMargin, -topMargin));
       fields = fieldsController.iterateFields(fields);
-      _iterateFieldsAndPorts(
-          fields: fields,
-          condition: (page) => pageToIterate == page,
-          action: (field, port) {
-            final pos = port.position;
-            final p = port.copyWith(
-                position: Rect.fromLTWH(pos.left - rightMargin,
-                    pos.top - topMargin, pos.width, pos.height));
-            _updatePdfFieldData(page, field, p);
-          });
+      for (final pageNo in pagesToIterate) {
+        final template = templates[pageNo - 1];
+        final page = pdf.pages.add();
+        page.graphics
+            .drawPdfTemplate(template, Offset(-rightMargin, -topMargin));
+        _iterateFieldsAndPorts(
+            fields: fields,
+            condition: (page) => pageNo == page,
+            action: (field, port) {
+              final pos = port.position;
+              final p = port.copyWith(
+                  position: Rect.fromLTWH(pos.left - rightMargin,
+                      pos.top - topMargin, pos.width, pos.height));
+              _updatePdfFieldData(page, field, p);
+            });
+      }
     }
 
     await file!.writeAsBytes(pdf.saveSync());
