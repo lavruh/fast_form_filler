@@ -2,31 +2,31 @@ name: fast_form_filler
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.1+1
+version: 1.0.2+1
 
 environment:
-  sdk: '>=3.0.5 <4.0.0'
+  sdk: '>=3.4.4 <4.0.0'
 
 dependencies:
   archive: ^3.4.10
   build_runner: ^2.4.8
-  file_picker: ^6.1.1
+  file_picker: ^8.1.3
   flutter:
     sdk: flutter
   get: ^4.6.6
   intl: ^0.19.0
-  package_info_plus: ^5.0.1
+  package_info_plus: ^8.1.1
   path: ^1.8.3
   path_provider: ^2.1.2
   printing: ^5.11.1
-  syncfusion_flutter_pdf: ^24.1.45
-  syncfusion_flutter_pdfviewer: ^24.1.45
+  syncfusion_flutter_pdf: ^27.1.58
+  syncfusion_flutter_pdfviewer: ^27.1.58
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
-  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.1
 
 flutter:
   uses-material-design: true

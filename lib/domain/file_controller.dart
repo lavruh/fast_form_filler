@@ -51,6 +51,13 @@ class FileController extends GetxController {
     }
   }
 
+  saveOutputPdfFile() async {
+    final pdf = file;
+    final f = await FilePicker.platform.saveFile(allowedExtensions: ['pdf']);
+    if (f == null || pdf == null) return;
+    pdf.copy(f);
+  }
+
   createFileFromIteratingFields({
     int numberOfIterations = 1,
     List<int> pagesToIterate = const [1],
