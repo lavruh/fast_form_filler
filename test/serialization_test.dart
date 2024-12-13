@@ -11,7 +11,7 @@ void main() {
       Get.put<FileController>(FileController());
       final fieldsController = Get.put<FieldsController>(FieldsController());
       fieldsController.fields.add(
-        const Field(
+        Field(
             id: '1',
             title: 'Field 1',
             data: 'Data 1',
@@ -34,7 +34,7 @@ void main() {
       Get.put<FileController>(FileController());
       final fieldsController = Get.put<FieldsController>(FieldsController());
       fieldsController.fields.add(
-        const Field(
+        Field(
             id: '1',
             title: 'Field 1',
             data: 'Data 1',

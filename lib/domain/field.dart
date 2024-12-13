@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:fast_form_filler/domain/date_field.dart';
+import 'package:fast_form_filler/domain/number_field.dart';
 import 'package:fast_form_filler/domain/show_port.dart';
-import 'package:intl/intl.dart';
+import 'package:fast_form_filler/domain/string_field.dart';
 
 class Field {
   final String id;
@@ -9,19 +11,22 @@ class Field {
   final List<ShowPort> showPorts;
   final FieldType fieldType;
   final FieldDataType dataType;
-  final _dateStringFormat = "dd-MM-yyyy";
 
-  const Field({
-    required this.id,
-    required this.title,
-    required this.data,
-    required this.showPorts,
-    required this.fieldType,
-    required this.dataType,
-  });
+  Field({
+    String? id,
+    this.title = "",
+    this.data = "",
+    List<ShowPort>? showPorts,
+    this.fieldType = FieldType.same,
+    this.dataType = FieldDataType.string,
+  })  : id = id ?? _generateId(),
+        showPorts = showPorts ?? [];
+
+  static String _generateId() =>
+      DateTime.now().millisecondsSinceEpoch.toString();
 
   Field.empty()
-      : id = DateTime.now().millisecondsSinceEpoch.toString(),
+      : id = _generateId(),
         title = "",
         data = "",
         showPorts = [],
@@ -35,14 +40,29 @@ class Field {
       List<ShowPort>? showPorts,
       FieldType? fieldType,
       FieldDataType? dataType}) {
-    return Field(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      data: data ?? this.data,
-      showPorts: showPorts ?? this.showPorts,
-      fieldType: fieldType ?? this.fieldType,
-      dataType: dataType ?? this.dataType,
-    );
+    final t = dataType ?? this.dataType;
+    if (t == FieldDataType.number) {
+      return NumberField(
+          id: id ?? this.id,
+          title: title ?? this.title,
+          data: data ?? this.data,
+          showPorts: showPorts ?? this.showPorts,
+          fieldType: fieldType ?? this.fieldType);
+    }
+    if (t == FieldDataType.date) {
+      return DateField(
+          id: id ?? this.id,
+          title: title ?? this.title,
+          data: data ?? this.data,
+          showPorts: showPorts ?? this.showPorts,
+          fieldType: fieldType ?? this.fieldType);
+    }
+    return StringField(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        data: data ?? this.data,
+        showPorts: showPorts ?? this.showPorts,
+        fieldType: fieldType ?? this.fieldType);
   }
 
   String toJson() {
@@ -67,7 +87,7 @@ class Field {
       ports.add(ShowPort.fromJson("$sp"));
     }
 
-    return Field(
+    final f = Field(
       id: json['id'] as String,
       title: json['title'] as String,
       data: json['data'] as String,
@@ -79,47 +99,13 @@ class Field {
           (e) => e.toString() == json['dataType'],
           orElse: () => FieldDataType.string),
     );
+
+    return f.copyWith();
   }
 
-  String? validateField(String? val) {
-    if (dataType == FieldDataType.number) {
-      if (val == null || int.tryParse(val) == null) return "Incorrect integer";
-    }
-    if (dataType == FieldDataType.date) {
-      if (val == null || DateFormat(_dateStringFormat).tryParse(val) == null) {
-        return "Incorrect Date, Should be [dd-mm-yyyy]";
-      }
-    }
-    return null;
-  }
+  String? validateField(String? val) => null;
 
-  Field iterateValue() {
-    if (dataType == FieldDataType.number) {
-      final i = int.tryParse(data);
-      if (i != null) {
-        if (fieldType == FieldType.increasing) {
-          return copyWith(data: "${i + 1}");
-        }
-        if (fieldType == FieldType.decreasing) {
-          return copyWith(data: "${i - 1}");
-        }
-      }
-    }
-    if (dataType == FieldDataType.date) {
-      final d = DateFormat(_dateStringFormat).tryParse(data);
-      if (d != null) {
-        if (fieldType == FieldType.increasing) {
-          final newDate = d.add(const Duration(days: 1));
-          return copyWith(data: DateFormat(_dateStringFormat).format(newDate));
-        }
-        if (fieldType == FieldType.decreasing) {
-          final newDate = d.subtract(const Duration(days: 1));
-          return copyWith(data: DateFormat(_dateStringFormat).format(newDate));
-        }
-      }
-    }
-    return copyWith(data: data);
-  }
+  Field iterateValue() => copyWith();
 }
 
 enum FieldType { same, increasing, decreasing }
