@@ -116,7 +116,7 @@ class FieldsController extends GetxController {
     final jsonData = jsonDecode(json);
     List<Field> loadedFields = [];
     for (final f in jsonData) {
-      loadedFields.add(Field.fromJson(f));
+      loadedFields.add(Field().fromJson(f));
     }
     fields.clear();
     fields.addAll(loadedFields);

@@ -3,6 +3,7 @@ import 'package:fast_form_filler/domain/date_field.dart';
 import 'package:fast_form_filler/domain/number_field.dart';
 import 'package:fast_form_filler/domain/show_port.dart';
 import 'package:fast_form_filler/domain/string_field.dart';
+import 'package:fast_form_filler/domain/list_field.dart';
 
 class Field {
   final String id;
@@ -33,13 +34,15 @@ class Field {
         fieldType = FieldType.same,
         dataType = FieldDataType.string;
 
-  Field copyWith(
-      {String? id,
-      String? title,
-      String? data,
-      List<ShowPort>? showPorts,
-      FieldType? fieldType,
-      FieldDataType? dataType}) {
+  Field copyWith({
+    String? id,
+    String? title,
+    String? data,
+    List<ShowPort>? showPorts,
+    FieldType? fieldType,
+    FieldDataType? dataType,
+    List<String>? values,
+  }) {
     final t = dataType ?? this.dataType;
     if (t == FieldDataType.number) {
       return NumberField(
@@ -57,6 +60,20 @@ class Field {
           showPorts: showPorts ?? this.showPorts,
           fieldType: fieldType ?? this.fieldType);
     }
+    if (t == FieldDataType.list) {
+      List<String> v = [];
+      if (runtimeType == ListField) {
+        v = (this as ListField).values;
+      }
+
+      return ListField(
+          id: id ?? this.id,
+          title: title ?? this.title,
+          data: data ?? this.data,
+          showPorts: showPorts ?? this.showPorts,
+          fieldType: fieldType ?? this.fieldType,
+          values: values ?? v);
+    }
     return StringField(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -65,8 +82,8 @@ class Field {
         fieldType: fieldType ?? this.fieldType);
   }
 
-  String toJson() {
-    final d = {
+  Map<String, dynamic> toMap() {
+    return {
       'id': id,
       'title': title,
       'data': data,
@@ -74,17 +91,28 @@ class Field {
       'fieldType': fieldType.toString(),
       'dataType': dataType.toString(),
     };
-    return jsonEncode(d);
   }
 
-  factory Field.fromJson(String jsonString) {
+  String toJson() {
+    final map = toMap();
+    return jsonEncode(map);
+  }
+
+  Field fromJson(String jsonString) {
     final json = jsonDecode(jsonString);
 
     final portsJson = json['showPorts'];
     List<ShowPort> ports = [];
-
     for (final sp in portsJson) {
       ports.add(ShowPort.fromJson("$sp"));
+    }
+
+    final valuesJson = json['values'];
+    List<String> values = [];
+    if (valuesJson != null) {
+      for (final v in valuesJson) {
+        values.add(v);
+      }
     }
 
     final f = Field(
@@ -100,7 +128,7 @@ class Field {
           orElse: () => FieldDataType.string),
     );
 
-    return f.copyWith();
+    return f.copyWith(values: values);
   }
 
   String? validateField(String? val) => null;
@@ -110,4 +138,4 @@ class Field {
 
 enum FieldType { same, increasing, decreasing }
 
-enum FieldDataType { string, number, date }
+enum FieldDataType { string, number, date, list }
